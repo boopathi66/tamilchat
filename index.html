@@ -1,181 +1,101 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Tamil Superior Chat</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="auth.css">
 </head>
 <body>
-
-<header class="topbar">
-  <div class="brand">💗 TAMIL SUPERIOR CHAT</div>
-  <div class="top-actions">
-    <button onclick="openOwner()">👑 Owner Portal</button>
-    <button>🔔</button>
-    <button>👤</button>
-  </div>
+<header class="header">
+  <div class="logo">💗 TAMIL SUPERIOR CHAT</div>
+  <span>● Community</span>
 </header>
 
-<div class="layout">
-  <main class="chat-area">
+<main class="welcome">
+  <section class="intro">
+    <div class="hero-icon">💬</div>
+    <h1>Connect. Chat. Belong.</h1>
+    <h2>Your Tamil Chat Community</h2>
+    <p>Meet new friends, share conversations, express yourself and enjoy your community.</p>
+    <div class="features">
+      <span>💬 Live Chat</span>
+      <span>❤️ Friends</span>
+      <span>👑 Special Badges</span>
+    </div>
+  </section>
 
-    <div class="room-title">
-      <strong>Public Chat Room</strong>
-      <span class="online-count">
-        ● Online <span id="onlineCount">4</span>
-      </span>
+  <section class="auth-card">
+    <div id="loginSection">
+      <h2>Welcome Back!</h2>
+      <p class="subtitle">Login to your account</p>
+      <form id="loginForm">
+        <label>Email Address</label>
+        <input type="email" id="loginEmail" required placeholder="Enter email">
+        <label>Password</label>
+        <input type="password" id="loginPassword" required placeholder="Enter password">
+        <p class="forgot"><a href="#" id="forgotLink">Forgot Password?</a></p>
+        <button class="main-button">LOGIN</button>
+      </form>
+      <p class="switch">New here? <a href="#" id="signupLink">Create an Account</a></p>
     </div>
 
-    <div class="messages" id="messages"></div>
-
-    <div class="composer">
-      <div class="emoji-row">
-        <button onclick="addEmoji('😀')">😀</button>
-        <button onclick="addEmoji('😂')">😂</button>
-        <button onclick="addEmoji('😍')">😍</button>
-        <button onclick="addEmoji('❤️')">❤️</button>
-        <button onclick="addEmoji('😘')">😘</button>
-        <button onclick="addEmoji('🔥')">🔥</button>
-        <button onclick="addEmoji('👍')">👍</button>
-        <button onclick="addEmoji('🎉')">🎉</button>
-      </div>
-
-      <div class="send-row">
-        <input
-          id="messageInput"
-          placeholder="Type your message..."
-          maxlength="2000"
-          onkeydown="if(event.key==='Enter')sendMessage()"
-        >
-        <button class="send-btn" onclick="sendMessage()">
-          ➤ Send
-        </button>
-      </div>
+    <div id="signupSection" class="hidden">
+      <h2>Create Account</h2>
+      <p class="subtitle">Join Tamil Superior Chat</p>
+      <form id="signupForm">
+        <label>Username</label>
+        <input id="signupUsername" required minlength="3" maxlength="24" placeholder="Choose username">
+        <label>Email Address</label>
+        <input type="email" id="signupEmail" required placeholder="Enter email">
+        <label>Password</label>
+        <input type="password" id="signupPassword" required minlength="8" placeholder="Create password">
+        <label>Confirm Password</label>
+        <input type="password" id="confirmPassword" required placeholder="Repeat password">
+        <button class="main-button">CREATE ACCOUNT</button>
+      </form>
+      <p class="switch">Already registered? <a href="#" id="loginLink">Login</a></p>
     </div>
 
-  </main>
-
-  <aside class="sidebar">
-    <h3>📸 Stories</h3>
-
-    <div class="story-row">
-      <div class="story">🌸<p>Friends</p></div>
-      <div class="story">❤️<p>Love</p></div>
-      <div class="story">🌍<p>Travel</p></div>
-      <div class="story">🎵<p>Music</p></div>
+    <div id="otpSection" class="hidden">
+      <h2>Verify Your Email</h2>
+      <p class="subtitle">Enter the six-digit code sent to your email.</p>
+      <form id="otpForm">
+        <input id="otpCode" inputmode="numeric" maxlength="6" pattern="[0-9]{6}" placeholder="Enter OTP" required>
+        <button class="main-button">VERIFY OTP</button>
+      </form>
+      <button id="resendOtp" class="secondary-button">Resend OTP</button>
+      <p class="switch"><a href="#" id="backToLogin">Back to Login</a></p>
     </div>
 
-    <h3>Online Members</h3>
-    <div id="onlineMembers"></div>
-  </aside>
-</div>
-
-<footer class="footer">
-  <span>▶ Tamil Superior Chat</span>
-  <span>Community Chat</span>
-</footer>
-
-<!-- OWNER CONTROL PORTAL -->
-<div class="panel" id="ownerPanel">
-  <div class="panel-box">
-
-    <div class="panel-heading">
-      <h2>👑 OWNER CONTROL PORTAL</h2>
-      <button class="danger" onclick="closeOwner()">Close ✕</button>
+    <div id="forgotSection" class="hidden">
+      <h2>Forgot Password?</h2>
+      <p class="subtitle">Enter your registered email.</p>
+      <form id="forgotForm">
+        <input type="email" id="forgotEmail" required placeholder="Email address">
+        <button class="main-button">SEND RECOVERY OTP</button>
+      </form>
+      <p class="switch"><a href="#" id="forgotBack">Back to Login</a></p>
     </div>
 
-    <p>Welcome, <strong>Boopathi</strong> – Website Owner</p>
-    <p class="status" id="ownerStatus">
-      Owner controls are available in this demo.
-    </p>
+    <div id="resetSection" class="hidden">
+      <h2>Create New Password</h2>
+      <p class="subtitle">Your email has been verified.</p>
+      <form id="resetForm">
+        <label>New Password</label>
+        <input type="password" id="newPassword" required minlength="8">
+        <label>Confirm Password</label>
+        <input type="password" id="repeatPassword" required minlength="8">
+        <button class="main-button">SAVE PASSWORD</button>
+      </form>
+    </div>
 
-    <section>
-      <h3>1. Invisible Mode</h3>
-      <label>
-        <input
-          type="checkbox"
-          id="invisibleToggle"
-          onchange="toggleInvisible()"
-        >
-        Hide my online status
-      </label>
-    </section>
+    <p id="statusMessage" class="status"></p>
+  </section>
+</main>
 
-    <section>
-      <h3>2. Upload Custom PNG Badge</h3>
-
-      <input id="badgeName" placeholder="Badge name">
-
-      <select id="badgeCategory">
-        <option value="Special">Special Badge</option>
-        <option value="Player">Player Badge</option>
-        <option value="VIP">VIP Badge</option>
-        <option value="Rank">Rank Badge</option>
-      </select>
-
-      <input type="file" id="badgeFile" accept=".png,image/png">
-
-      <button class="primary" onclick="uploadBadge()">
-        Upload Badge
-      </button>
-
-      <p>PNG only. Maximum 256 KB.</p>
-    </section>
-
-    <section>
-      <h3>3. Available Badges</h3>
-      <div id="badgeCollection"></div>
-    </section>
-
-    <section>
-      <h3>4. Assign Badge to Member</h3>
-
-      <select id="badgeMember"></select>
-      <select id="badgeSelect"></select>
-
-      <button class="primary" onclick="assignBadge()">
-        Assign Badge
-      </button>
-    </section>
-
-    <section>
-      <h3>5. Member Role Management</h3>
-      <p>Promote members one level at a time.</p>
-      <div id="memberManagement"></div>
-    </section>
-
-    <section>
-      <h3>6. Chat Appearance</h3>
-
-      <label>
-        Chat background:
-        <input
-          type="color"
-          id="chatColor"
-          value="#ffffff"
-          onchange="changeBackground()"
-        >
-      </label>
-    </section>
-
-    <section>
-      <h3>7. Community Settings</h3>
-
-      <label>
-        <input
-          type="checkbox"
-          id="chatEnabled"
-          checked
-          onchange="toggleChat()"
-        >
-        Enable public chat
-      </label>
-    </section>
-
-  </div>
-</div>
-
-<script src="script.js"></script>
+<footer>© 2026 Tamil Superior Chat. All rights reserved.</footer>
+<script type="module" src="auth.js"></script>
 </body>
 </html>
