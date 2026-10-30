@@ -1,0 +1,182 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tamil Superior Chat</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">💗 TAMIL SUPERIOR CHAT</div>
+  <div class="top-actions">
+    <button onclick="openOwner()">👑 Owner Portal</button>
+    <button>🔔</button>
+    <button>👤</button>
+  </div>
+</header>
+
+<div class="layout">
+  <main class="chat-area">
+
+    <div class="room-title">
+      <strong>Public Chat Room</strong>
+      <span class="online-count">
+        ● Online <span id="onlineCount">4</span>
+      </span>
+    </div>
+
+    <div class="messages" id="messages"></div>
+
+    <div class="composer">
+      <div class="emoji-row">
+        <button onclick="addEmoji('😀')">😀</button>
+        <button onclick="addEmoji('😂')">😂</button>
+        <button onclick="addEmoji('😍')">😍</button>
+        <button onclick="addEmoji('❤️')">❤️</button>
+        <button onclick="addEmoji('😘')">😘</button>
+        <button onclick="addEmoji('🔥')">🔥</button>
+        <button onclick="addEmoji('👍')">👍</button>
+        <button onclick="addEmoji('🎉')">🎉</button>
+      </div>
+
+      <div class="send-row">
+        <input
+          id="messageInput"
+          placeholder="Type your message..."
+          maxlength="2000"
+          onkeydown="if(event.key==='Enter')sendMessage()"
+        >
+        <button class="send-btn" onclick="sendMessage()">
+          ➤ Send
+        </button>
+      </div>
+    </div>
+
+  </main>
+
+  <aside class="sidebar">
+    <h3>📸 Stories</h3>
+
+    <div class="story-row">
+      <div class="story">🌸<p>Friends</p></div>
+      <div class="story">❤️<p>Love</p></div>
+      <div class="story">🌍<p>Travel</p></div>
+      <div class="story">🎵<p>Music</p></div>
+    </div>
+
+    <h3>Online Members</h3>
+    <div id="onlineMembers"></div>
+  </aside>
+</div>
+
+<footer class="footer">
+  <span>▶ Tamil Superior Chat</span>
+  <span>Community Chat</span>
+</footer>
+
+<!-- OWNER CONTROL PORTAL -->
+<div class="panel" id="ownerPanel">
+  <div class="panel-box">
+
+    <div class="panel-heading">
+      <h2>👑 OWNER CONTROL PORTAL</h2>
+      <button class="danger" onclick="closeOwner()">Close ✕</button>
+    </div>
+
+    <p>Welcome, <strong>Boopathi</strong> – Website Owner</p>
+    <p class="status" id="ownerStatus">
+      Owner controls are available in this demo.
+    </p>
+
+    <section>
+      <h3>1. Invisible Mode</h3>
+      <label>
+        <input
+          type="checkbox"
+          id="invisibleToggle"
+          onchange="toggleInvisible()"
+        >
+        Hide my online status
+      </label>
+    </section>
+
+    <section>
+      <h3>2. Upload Custom PNG Badge</h3>
+
+      <input id="badgeName" placeholder="Badge name">
+
+      <select id="badgeCategory">
+        <option value="Special">Special Badge</option>
+        <option value="Player">Player Badge</option>
+        <option value="VIP">VIP Badge</option>
+        <option value="Rank">Rank Badge</option>
+      </select>
+
+      <input type="file" id="badgeFile" accept=".png,image/png">
+
+      <button class="primary" onclick="uploadBadge()">
+        Upload Badge
+      </button>
+
+      <p>PNG only. Maximum 256 KB.</p>
+    </section>
+
+    <section>
+      <h3>3. Available Badges</h3>
+      <div id="badgeCollection"></div>
+    </section>
+
+    <section>
+      <h3>4. Assign Badge to Member</h3>
+
+      <select id="badgeMember"></select>
+      <select id="badgeSelect"></select>
+
+      <button class="primary" onclick="assignBadge()">
+        Assign Badge
+      </button>
+    </section>
+
+    <section>
+      <h3>5. Member Role Management</h3>
+      <p>Promote members one level at a time.</p>
+      <div id="memberManagement"></div>
+    </section>
+
+    <section>
+      <h3>6. Chat Appearance</h3>
+
+      <label>
+        Chat background:
+        <input
+          type="color"
+          id="chatColor"
+          value="#ffffff"
+          onchange="changeBackground()"
+        >
+      </label>
+    </section>
+
+    <section>
+      <h3>7. Community Settings</h3>
+
+      <label>
+        <input
+          type="checkbox"
+          id="chatEnabled"
+          checked
+          onchange="toggleChat()"
+        >
+        Enable public chat
+      </label>
+    </section>
+
+  </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
