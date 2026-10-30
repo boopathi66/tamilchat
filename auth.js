@@ -1,11 +1,13 @@
 import { createClient } from
 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
 
+// SUPABASE SETTINGS
 const SUPABASE_URL = 'YOUR_SUPABASE_PROJECT_URL';
 const SUPABASE_KEY = 'YOUR_SUPABASE_PUBLISHABLE_KEY';
 
-const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+const $ = id => document.getElementById(id);
 
+let supabase = null;
 let currentEmail = '';
 let currentPurpose = '';
 
@@ -17,92 +19,122 @@ const sections = [
   'resetSection'
 ];
 
+// PAGE NAVIGATION
 function showSection(id) {
-  sections.forEach(s =>
-    document.getElementById(s).classList.add('hidden')
-  );
-  document.getElementById(id).classList.remove('hidden');
+  sections.forEach(section => {
+    $(section).classList.add('hidden');
+  });
+
+  $(id).classList.remove('hidden');
   showStatus('');
 }
 
+// STATUS MESSAGE
 function showStatus(message, error = false) {
-  const el = document.getElementById('statusMessage');
-  el.textContent = message;
-  el.style.color = error ? '#d93652' : '#218553';
+  $('statusMessage').textContent = message;
+  $('statusMessage').style.color =
+    error ? '#d93652' : '#218553';
 }
 
-const { data: initial } = await supabase.auth.getSession();
+// SUPABASE CHECK
+function connectSupabase() {
+  if (
+    SUPABASE_URL === 'YOUR_SUPABASE_PROJECT_URL' ||
+    SUPABASE_KEY === 'YOUR_SUPABASE_PUBLISHABLE_KEY'
+  ) {
+    showStatus(
+      'Please configure your Supabase URL and Publishable Key.',
+      true
+    );
+    return false;
+  }
 
-if (initial.session) {
-  location.replace('chat.html');
+  try {
+    supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+    return true;
+  } catch (error) {
+    showStatus('Supabase connection settings are invalid.', true);
+    return false;
+  }
 }
 
-document.getElementById('signupLink').onclick = e => {
+// NAVIGATION BUTTONS
+$('signupLink').addEventListener('click', e => {
   e.preventDefault();
   showSection('signupSection');
-};
+});
 
-document.getElementById('loginLink').onclick = e => {
+$('loginLink').addEventListener('click', e => {
   e.preventDefault();
   showSection('loginSection');
-};
+});
 
-document.getElementById('backToLogin').onclick = e => {
+$('backToLogin').addEventListener('click', e => {
   e.preventDefault();
   showSection('loginSection');
-};
+});
 
-document.getElementById('forgotBack').onclick = e => {
+$('forgotBack').addEventListener('click', e => {
   e.preventDefault();
   showSection('loginSection');
-};
+});
 
-document.getElementById('forgotLink').onclick = e => {
+$('forgotLink').addEventListener('click', e => {
   e.preventDefault();
   showSection('forgotSection');
-};
+});
 
 // LOGIN
-document.getElementById('loginForm').onsubmit = async e => {
+$('loginForm').addEventListener('submit', async e => {
   e.preventDefault();
 
-  const email = loginEmail.value.trim();
-  const password = loginPassword.value;
+  if (!connectSupabase()) return;
 
-  showStatus('Checking your account...');
+  showStatus('Checking login...');
 
   const { error } = await supabase.auth.signInWithPassword({
-    email,
-    password
+    email: $('loginEmail').value.trim(),
+    password: $('loginPassword').value
   });
 
-  if (error) return showStatus(error.message, true);
+  if (error) {
+    showStatus(error.message, true);
+    return;
+  }
 
-  location.replace('chat.html');
-};
+  location.href = 'chat.html';
+});
 
-// SIGNUP
-document.getElementById('signupForm').onsubmit = async e => {
+// SIGN UP
+$('signupForm').addEventListener('submit', async e => {
   e.preventDefault();
 
-  const username = signupUsername.value.trim();
-  const email = signupEmail.value.trim();
-  const password = signupPassword.value;
-  const confirm = confirmPassword.value;
+  if (!connectSupabase()) return;
 
-  if (password !== confirm)
-    return showStatus('Passwords do not match.', true);
+  const username = $('signupUsername').value.trim();
+  const email = $('signupEmail').value.trim();
+  const password = $('signupPassword').value;
+  const confirm = $('confirmPassword').value;
 
-  if (!/^[a-zA-Z0-9_]{3,24}$/.test(username))
-    return showStatus('Invalid username.', true);
+  if (password !== confirm) {
+    showStatus('Passwords do not match.', true);
+    return;
+  }
 
-  if (password.length < 8)
-    return showStatus('Password must be at least 8 characters.', true);
+  if (!/^[a-zA-Z0-9_]{3,24}$/.test(username)) {
+    showStatus('Enter a valid username.', true);
+    return;
+  }
+
+  if (password.length < 8) {
+    showStatus('Password must contain 8 characters.', true);
+    return;
+  }
+
+  showStatus('Creating account...');
 
   currentEmail = email;
   currentPurpose = 'signup';
-
-  showStatus('Sending verification OTP...');
 
   const { data, error } = await supabase.auth.signUp({
     email,
@@ -112,22 +144,27 @@ document.getElementById('signupForm').onsubmit = async e => {
     }
   });
 
-  if (error) return showStatus(error.message, true);
+  if (error) {
+    showStatus(error.message, true);
+    return;
+  }
 
   if (data.session) {
-    location.replace('chat.html');
+    location.href = 'chat.html';
     return;
   }
 
   showSection('otpSection');
-  showStatus('OTP sent to your email.');
-};
+  showStatus('Verification OTP sent to your email.');
+});
 
 // FORGOT PASSWORD
-document.getElementById('forgotForm').onsubmit = async e => {
+$('forgotForm').addEventListener('submit', async e => {
   e.preventDefault();
 
-  currentEmail = forgotEmail.value.trim();
+  if (!connectSupabase()) return;
+
+  currentEmail = $('forgotEmail').value.trim();
   currentPurpose = 'recovery';
 
   showStatus('Sending recovery OTP...');
@@ -136,77 +173,100 @@ document.getElementById('forgotForm').onsubmit = async e => {
     currentEmail
   );
 
-  if (error) return showStatus(error.message, true);
+  if (error) {
+    showStatus(error.message, true);
+    return;
+  }
 
   showSection('otpSection');
-  showStatus('Recovery OTP sent to your email.');
-};
+  showStatus('Recovery OTP sent. Check your email.');
+});
 
-// OTP VERIFICATION
-document.getElementById('otpForm').onsubmit = async e => {
+// VERIFY OTP
+$('otpForm').addEventListener('submit', async e => {
   e.preventDefault();
 
-  const token = otpCode.value.trim();
+  if (!supabase && !connectSupabase()) return;
 
-  if (!/^[0-9]{6}$/.test(token))
-    return showStatus('Enter a valid six-digit OTP.', true);
+  const token = $('otpCode').value.trim();
+
+  if (!/^[0-9]{6}$/.test(token)) {
+    showStatus('Enter a six-digit OTP.', true);
+    return;
+  }
 
   showStatus('Verifying OTP...');
 
   const { error } = await supabase.auth.verifyOtp({
     email: currentEmail,
     token,
-    type: currentPurpose === 'signup' ? 'signup' : 'recovery'
+    type: currentPurpose
   });
 
-  if (error) return showStatus(error.message, true);
+  if (error) {
+    showStatus(error.message, true);
+    return;
+  }
 
   if (currentPurpose === 'signup') {
-    location.replace('chat.html');
+    location.href = 'chat.html';
   } else {
     showSection('resetSection');
-    showStatus('Email verified. Create your new password.');
+    showStatus('Email verified. Create a new password.');
   }
-};
+});
 
 // RESEND OTP
-document.getElementById('resendOtp').onclick = async () => {
-  if (!currentEmail || !currentPurpose)
-    return showStatus('Start the process again.', true);
+$('resendOtp').addEventListener('click', async () => {
+  if (!supabase && !connectSupabase()) return;
 
-  showStatus('Sending a new OTP...');
-
-  let error;
-
-  if (currentPurpose === 'signup') {
-    ({ error } = await supabase.auth.resend({
-      type: 'signup',
-      email: currentEmail
-    }));
-  } else {
-    ({ error } = await supabase.auth.resetPasswordForEmail(
-      currentEmail
-    ));
+  if (!currentEmail || !currentPurpose) {
+    showStatus('Please start again.', true);
+    return;
   }
 
-  if (error) return showStatus(error.message, true);
+  showStatus('Sending new OTP...');
 
-  otpCode.value = '';
-  showStatus('New OTP sent. Check your email.');
-};
+  let result;
+
+  if (currentPurpose === 'signup') {
+    result = await supabase.auth.resend({
+      type: 'signup',
+      email: currentEmail
+    });
+  } else {
+    result = await supabase.auth.resetPasswordForEmail(
+      currentEmail
+    );
+  }
+
+  if (result.error) {
+    showStatus(result.error.message, true);
+    return;
+  }
+
+  $('otpCode').value = '';
+  showStatus('New OTP sent successfully.');
+});
 
 // RESET PASSWORD
-document.getElementById('resetForm').onsubmit = async e => {
+$('resetForm').addEventListener('submit', async e => {
   e.preventDefault();
 
-  const password = newPassword.value;
-  const confirm = repeatPassword.value;
+  if (!supabase && !connectSupabase()) return;
 
-  if (password.length < 8)
-    return showStatus('Password must have at least 8 characters.', true);
+  const password = $('newPassword').value;
+  const confirm = $('repeatPassword').value;
 
-  if (password !== confirm)
-    return showStatus('Passwords do not match.', true);
+  if (password.length < 8) {
+    showStatus('Password must contain 8 characters.', true);
+    return;
+  }
+
+  if (password !== confirm) {
+    showStatus('Passwords do not match.', true);
+    return;
+  }
 
   showStatus('Updating password...');
 
@@ -214,7 +274,10 @@ document.getElementById('resetForm').onsubmit = async e => {
     password
   });
 
-  if (error) return showStatus(error.message, true);
+  if (error) {
+    showStatus(error.message, true);
+    return;
+  }
 
   await supabase.auth.signOut();
 
@@ -222,5 +285,14 @@ document.getElementById('resetForm').onsubmit = async e => {
   currentPurpose = '';
 
   showSection('loginSection');
-  showStatus('Password updated successfully. Please login.');
-};
+  showStatus('Password updated! Please login.');
+});
+
+// CHECK EXISTING SESSION
+if (connectSupabase()) {
+  const { data, error } = await supabase.auth.getSession();
+
+  if (!error && data.session) {
+    location.replace('chat.html');
+  }
+}
